@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Shop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>University of Michigan - Dearborn Book Shop</h1>
+        <button id="add-book-button" class="add-book-button">Add Book</button>
+        <table id="books-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="books-tbody">
+                <!-- Rows will be dynamically populated here -->
+            </tbody>
+        </table>
+        
+        <!-- Pagination Controls -->
+        <div id="pagination-controls">
+            <button id="prev-page" class="pagination-button">Previous</button>
+            <span id="page-number">Page 1</span>
+            <button id="next-page" class="pagination-button">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const booksPerPage = 10;  // Set number of books per page
+
+        document.addEventListener('DOMContentLoaded', fetchBooks);
+
+        // Fetch all books and display them in the table
+        function fetchBooks() {
+            fetch('http://44.200.206.221:8080/books')
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    const totalBooks = data.length;
+                    const totalPages = Math.ceil(totalBooks / booksPerPage);
+                    
+                    displayBooks(data.slice((currentPage - 1) * booksPerPage, currentPage * booksPerPage));
+                    updatePaginationControls(totalPages);
+                })
+                .catch(error => console.error('Error fetching books:', error));
+        }
+
+        // Display the books for the current page
+        function displayBooks(books) {
+            const tbody = document.getElementById('books-tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+            books.forEach(book => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.cost}</td>
+                    <td>
+                        <button onclick="viewBook('${book.id}')" class="button button-view">View</button>
+                        <button onclick="editBook('${book.id}')" class="button button-edit">Edit</button>
+                        <button onclick="deleteBook('${book.id}')" class="button button-delete">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update pagination controls (Next/Prev buttons)
+        function updatePaginationControls(totalPages) {
+            const pageNumber = document.getElementById('page-number');
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+            
+            pageNumber.textContent = `Page ${currentPage}`;
+            
+            // Disable/Enable the Previous button
+            prevButton.disabled = currentPage === 1;
+            prevButton.style.display = currentPage === 1 ? 'none' : 'inline-block';
+            
+            // Disable/Enable the Next button
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.style.display = currentPage === totalPages ? 'none' : 'inline-block';
+        }
+
+        // Pagination: Go to the next page
+        document.getElementById('next-page').addEventListener('click', () => {
+            currentPage++;
+            fetchBooks();  // Refresh the displayed books
+        });
+
+        // Pagination: Go to the previous page
+        document.getElementById('prev-page').addEventListener('click', () => {
+            currentPage--;
+            fetchBooks();  // Refresh the displayed books
+        });
+
+        // View details of a single book
+        function viewBook(id) {
+            fetch('http://44.200.206.221:8080/book/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(book => {
+                alert(`Title: ${book.title}\nAuthor: ${book.author}\nCost: ${book.cost}`);
+            })
+            .catch(error => console.error('Error fetching book details:', error));
+        }
+
+        // Edit a book's details
+        function editBook(id) {
+            const newTitle = prompt("Enter new title:");
+            const newAuthor = prompt("Enter new author:");
+            const newCost = prompt("Enter new cost:");
+
+            if (!newTitle || !newAuthor || isNaN(newCost)) {
+                alert('Invalid input. Please try again.');
+                return;
+            }
+
+            fetch('http://44.200.206.221:8080/book', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id,
+                    title: newTitle,
+                    author: newAuthor,
+                    cost: parseFloat(newCost)
+                })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                alert(`Book ${id} has been updated`);
+                fetchBooks(); // Refresh the list of books
+            })
+            .catch(error => console.error('Error updating book:', error));
+        }
+
+        // Delete a book
+        function deleteBook(id) {
+            fetch('http://44.200.206.221:8080/book', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                alert(`Book ${id} has been deleted`);
+                fetchBooks(); // Refresh the book list
+            })
+            .catch(error => console.error('Error deleting book:', error));
+        }
+
+        // Add a new book
+        document.getElementById('add-book-button').addEventListener('click', () => {
+            const title = prompt("Enter book title:");
+            const author = prompt("Enter book author:");
+            const cost = prompt("Enter book cost:");
+
+            if (!title || !author || isNaN(cost)) {
+                alert('Invalid input. Please try again.');
+                return;
+            }
+
+            fetch('http://44.200.206.221:8080/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, author, cost: parseFloat(cost) })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                alert("Book has been added");
+                fetchBooks(); // Refresh the list of books
+            })
+            .catch(error => console.error('Error adding book:', error));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+/* Basic reset and styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Header styling for University Bookstore */
+.main-header {
+  color: #fff;
+  background-color: #007bff;
+  text-align: center;
+  padding: 20px 0; /* Increased padding */
+  margin: 0;
+  font-size: 36px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Button styling */
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  margin: 0 4px;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.button-view {
+  background-color: #007bff;
+}
+
+.button-edit {
+  background-color: #28a745;
+}
+
+.button-delete {
+  background-color: #dc3545;
+}
+
+.button:hover {
+  opacity: 0.9;
+  transform: scale(1.1);
+}
+
+/* Add Book button styling */
+.add-book-button {
+  float: right;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-book-button:hover {
+  opacity: 0.9;
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Card styling for book details */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.card-body {
+  padding: 20px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Button for book detail page */
+.card .btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.card .btn:hover {
+  background-color: #218838;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-header {
+      font-size: 24px;
+  }
+
+  .container {
+      padding: 10px;
+  }
+
+  .add-book-button {
+      font-size: 12px;
+      padding: 8px 15px;
+  }
+
+  .button {
+      font-size: 12px;
+      padding: 6px 12px;
+  }
+
+  .card-body {
+      font-size: 14px;
+  }
+}
+
+/* Animation for page load */
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+.container {
+  animation: fadeIn 1s ease-in-out;
+}
